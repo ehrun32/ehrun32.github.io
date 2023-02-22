@@ -112,12 +112,12 @@ textarea{
   content: '';
   position: absolute;
   top: 35%;
-  left: 50%
-  transform: translate(-50%, -50%);
   width: 80vw;
   height: 40vw;
   background: radial-gradient(50% 50% at 50% 50%, rgba(255, 101, 118, .08) 0%, rgba(255, 101, 118, 0) 100%);
   z-index: -1;
+  transform: translate(-50%, -50%);
+  left: 50%
 }
 
 
