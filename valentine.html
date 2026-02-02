@@ -172,47 +172,195 @@
       .hidden {
         display: none;
       }
+
+      /* Password screen */
+      #lockScreen {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            1200px 600px at 20% 10%,
+            var(--bg1),
+            transparent 60%
+          ),
+          radial-gradient(1200px 600px at 80% 90%, #ffd9e8, transparent 55%),
+          linear-gradient(135deg, var(--bg2), #ffffff);
+        display: grid;
+        place-items: center;
+        z-index: 1000;
+        padding: 18px;
+      }
+      #lockScreen.unlocked {
+        display: none;
+      }
+      .lock-card {
+        width: min(400px, 90vw);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 30px 24px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+      .lock-card h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+      .lock-card p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .password-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .password-input:focus {
+        border-color: #ff4d88;
+      }
+      .password-input.shake {
+        animation: shake 0.4s ease;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-8px);
+        }
+        40%,
+        80% {
+          transform: translateX(8px);
+        }
+      }
+      .lock-hint {
+        font-size: 13px;
+        color: #999;
+        margin-top: 16px;
+      }
+
+      #mainContent {
+        display: none;
+      }
+      #mainContent.unlocked {
+        display: block;
+      }
     </style>
   </head>
 
   <body>
-    <div class="card">
-      <!-- PAGE 1 -->
-      <div id="page1" class="page active">
-        <h1>Hey you 🤍</h1>
-        <p>
-          I made something small<br />
-          because you’re really special to me.
-        </p>
-        <button id="nextBtn" class="btn btn-primary">Next ➜</button>
-        <div class="tiny">ps. you’re cute. that’s it.</div>
-      </div>
-
-      <!-- PAGE 2 -->
-      <div id="page2" class="page">
-        <h1>Be my Valentine? 💘</h1>
-        <p>Just me asking you something important.</p>
-        <div class="row">
-          <button id="yesBtn" class="btn btn-primary">Yes 💖</button>
-        </div>
-        <div id="hint" class="tiny">Try tapping “No” 😌</div>
-      </div>
-
-      <!-- PAGE 3 -->
-      <div id="page3" class="page">
-        <h1>YAY 🥰</h1>
-        <p>
-          Okay good.<br />
-          I’m really excited now ❤️
-        </p>
+    <!-- Password Lock Screen -->
+    <div id="lockScreen">
+      <div class="lock-card">
+        <h2>🔒 Secret Page</h2>
+        <p>What's my pretty girlfriends nickname?</p>
+        <input
+          type="password"
+          id="passwordInput"
+          class="password-input"
+          placeholder="Enter password..."
+          autocomplete="off"
+        />
+        <button id="unlockBtn" class="btn btn-primary">Unlock 💖</button>
+        <div class="lock-hint">hint: what do I call you all the time?🥰</div>
       </div>
     </div>
 
-    <!-- ONLY NO BUTTON (MOVES) -->
-    <button id="noBtn" class="btn btn-secondary hidden">No 🙃</button>
+    <div id="mainContent">
+      <div class="card">
+        <!-- PAGE 1 -->
+        <div id="page1" class="page active">
+          <h1>Hey you 🤍</h1>
+          <p>
+            I made something small<br />
+            because you’re really special to me.
+          </p>
+          <button id="nextBtn" class="btn btn-primary">Next ➜</button>
+          <div class="tiny">ps. you’re cute. that’s it.</div>
+        </div>
 
-    <!-- Toast -->
-    <div id="toast" aria-live="polite"></div>
+        <!-- PAGE 2 -->
+        <div id="page2" class="page">
+          <h1>Be my Valentine? 💘</h1>
+          <p>Just me asking you something important.</p>
+          <div class="row">
+            <button id="yesBtn" class="btn btn-primary">Yes 💖</button>
+          </div>
+          <div id="hint" class="tiny">Try tapping “No” 😌</div>
+        </div>
+
+        <!-- PAGE 3 -->
+        <div id="page3" class="page">
+          <h1>I love you ❤️</h1>
+          <p>
+            I really do.<br />
+            And I’m so happy you’re my Valentine 🥰
+          </p>
+        </div>
+      </div>
+
+      <!-- ONLY NO BUTTON (MOVES) -->
+      <button id="noBtn" class="btn btn-secondary hidden">No 🙃</button>
+
+      <!-- Toast -->
+      <div id="toast" aria-live="polite"></div>
+    </div>
+    <!-- end mainContent -->
+
+    <script>
+      // Password protection (hash of "baby")
+      const correctHash = "70904e80b3ef063a85dbe433e1f30e32";
+
+      function simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        // Convert to hex string and pad
+        const hex = Math.abs(hash).toString(16);
+        return hex.padStart(32, "0").slice(0, 32);
+      }
+
+      const lockScreen = document.getElementById("lockScreen");
+      const mainContent = document.getElementById("mainContent");
+      const passwordInput = document.getElementById("passwordInput");
+      const unlockBtn = document.getElementById("unlockBtn");
+
+      function tryUnlock() {
+        const input = passwordInput.value.toLowerCase().trim();
+        if (input === "baby") {
+          lockScreen.classList.add("unlocked");
+          mainContent.classList.add("unlocked");
+          localStorage.setItem("valentineUnlocked", "true");
+        } else {
+          passwordInput.classList.add("shake");
+          passwordInput.value = "";
+          setTimeout(() => passwordInput.classList.remove("shake"), 400);
+        }
+      }
+
+      // Check if already unlocked
+      if (localStorage.getItem("valentineUnlocked") === "true") {
+        lockScreen.classList.add("unlocked");
+        mainContent.classList.add("unlocked");
+      }
+
+      unlockBtn.onclick = tryUnlock;
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") tryUnlock();
+      });
+    </script>
 
     <script>
       const page1 = document.getElementById("page1");
