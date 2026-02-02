@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>💖</title>
+
+    <style>
+      :root {
+        --bg1: #ffe6f0;
+        --bg2: #fff7fb;
+        --card: rgba(255, 255, 255, 0.85);
+        --border: rgba(255, 105, 180, 0.25);
+        --text: #1f1f1f;
+        --muted: #555;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+        --radius: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Arial, sans-serif;
+        color: var(--text);
+        background: radial-gradient(
+            1200px 600px at 20% 10%,
+            var(--bg1),
+            transparent 60%
+          ),
+          radial-gradient(1200px 600px at 80% 90%, #ffd9e8, transparent 55%),
+          linear-gradient(135deg, var(--bg2), #ffffff);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+
+        padding: calc(18px + env(safe-area-inset-top))
+          calc(18px + env(safe-area-inset-right))
+          calc(18px + env(safe-area-inset-bottom))
+          calc(18px + env(safe-area-inset-left));
+      }
+
+      .card {
+        width: min(520px, 92vw);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 26px 18px 20px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+      }
+      p {
+        margin: 0 auto 18px;
+        color: var(--muted);
+        line-height: 1.35;
+        max-width: 42ch;
+        font-size: 16px;
+      }
+
+      .btn {
+        border: 0;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: transform 0.12s ease, filter 0.12s ease;
+        user-select: none;
+      }
+      .btn:active {
+        transform: translateY(1px) scale(0.98);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #ff4d88, #ff7ab0);
+        color: white;
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        color: #333;
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 6px;
+      }
+
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+
+      .tiny {
+        font-size: 12px;
+        color: #777;
+        margin-top: 12px;
+      }
+
+      /* Moving No button */
+      #noBtn {
+        position: fixed;
+        z-index: 10;
+        left: 50%;
+        top: 65%;
+        transform: translate(-50%, -50%);
+        touch-action: manipulation;
+      }
+
+      /* Toast message */
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(20px + env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.78);
+        color: white;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 14px;
+        max-width: min(92vw, 520px);
+        text-align: center;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+        z-index: 100;
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+      }
+
+      /* Floating hearts */
+      .heart {
+        position: fixed;
+        font-size: 18px;
+        pointer-events: none;
+        animation: floatUp 2.2s ease-out forwards;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
+      }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(1);
+          opacity: 0.95;
+        }
+        100% {
+          transform: translateY(-140px) scale(1.4);
+          opacity: 0;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <!-- PAGE 1 -->
+      <div id="page1" class="page active">
+        <h1>Hey you 🤍</h1>
+        <p>
+          I made something small<br />
+          because you’re really special to me.
+        </p>
+        <button id="nextBtn" class="btn btn-primary">Next ➜</button>
+        <div class="tiny">ps. you’re cute. that’s it.</div>
+      </div>
+
+      <!-- PAGE 2 -->
+      <div id="page2" class="page">
+        <h1>Be my Valentine? 💘</h1>
+        <p>Just me asking you something important.</p>
+        <div class="row">
+          <button id="yesBtn" class="btn btn-primary">Yes 💖</button>
+        </div>
+        <div id="hint" class="tiny">Try tapping “No” 😌</div>
+      </div>
+
+      <!-- PAGE 3 -->
+      <div id="page3" class="page">
+        <h1>YAY 🥰</h1>
+        <p>
+          Okay good.<br />
+          I’m really excited now ❤️
+        </p>
+      </div>
+    </div>
+
+    <!-- ONLY NO BUTTON (MOVES) -->
+    <button id="noBtn" class="btn btn-secondary hidden">No 🙃</button>
+
+    <!-- Toast -->
+    <div id="toast" aria-live="polite"></div>
+
+    <script>
+      const page1 = document.getElementById("page1");
+      const page2 = document.getElementById("page2");
+      const page3 = document.getElementById("page3");
+
+      const nextBtn = document.getElementById("nextBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+      const toast = document.getElementById("toast");
+      const hint = document.getElementById("hint");
+
+      // 100 cute "No" messages
+      const noMessages = [
+        "Nope 😌",
+        "Nice try 😂",
+        "Uh uh 🙃",
+        "Not today 😈",
+        "Wrong button, cutie 💖",
+        "I’m gonna pretend I didn’t see that 👀",
+        "Error 404: No not found 😭",
+        "Stoppp you’re making me blush 😳",
+        "That button is allergic to you 😅",
+        "Try the pink one 😌",
+        "No is unavailable right now 🛑",
+        "Denied (with love) 💕",
+        "Soo close… but no 😇",
+        "Plot twist: it moves 😭",
+        "You’re persistent huh 😏",
+        "My heart says YES tho 💗",
+        "Nope, try again 🫶",
+        "You can’t catch me 🏃‍♀️💨",
+        "Be nice to the button 😭",
+        "Incorrect choice 😤",
+        "That’s illegal 😌",
+        "No button said ‘nah’ 😭",
+        "Try again, pretty girl 💘",
+        "You’re too cute to click no 😭",
+        "I refuse to accept this reality 🫠",
+        "No? never heard of her 😌",
+        "That’s the wrong vibe 😅",
+        "I said what I said (it’s YES) 💖",
+        "Absolutely not 🙃",
+        "You’re chasing it like it owes you money 😂",
+        "You missed 😭",
+        "No button: ‘respectfully, no’ 😌",
+        "Try the other one 🥰",
+        "No is on vacation 🏖️",
+        "Not you hunting the no button 😭",
+        "This is cute but… no 🙃",
+        "I’m rooting for YES 💗",
+        "No button is shy 🫣",
+        "Hehe nope 😈",
+        "Nope (affectionate) 💕",
+        "It’s giving… YES only 💖",
+        "This is my favorite game 😂",
+        "You’re literally adorable 😭",
+        "No button: ‘catch me if you can’ 🏃‍♀️",
+        "Be serious 😌",
+        "Nope, sweetheart 💘",
+        "Don’t do that 😭",
+        "I’m laughing 😭",
+        "Try again 😇",
+        "No is not an option today 😌",
+        "Okay but why no 😭",
+        "Your finger is too powerful 💥",
+        "No button is scared of commitment 😂",
+        "You’re making it run 😭",
+        "That’s not very Valentine of you 😌",
+        "Nope nope nope 😂",
+        "Wait… why are you like this 😭",
+        "Stoppp 😂",
+        "No button said ‘later’ 🙃",
+        "That’s suspicious 🤨",
+        "Not allowed (by me) 💖",
+        "I’m just a girl… pressing no is hard 😭",
+        "You almost got it… SIKE 😈",
+        "No is cancelled 😌",
+        "Try the YES… for science 🧪💘",
+        "That one’s broken 😭",
+        "Your dedication is scary 😂",
+        "Nope (but I still love you) 💗",
+        "Button said ‘I’m shy’ 🫣",
+        "Not today ma’am 😌",
+        "You’re too cute to be this wrong 😭",
+        "No? in this economy? 😂",
+        "I’m giggling 🤭",
+        "No button is doing cardio 🏃‍♀️",
+        "Press YES and I’ll stop bullying you 😭",
+        "Try again bestie 💕",
+        "That’s the forbidden one 😈",
+        "No button said ‘bye’ 👋",
+        "You’re fighting for your life 😂",
+        "Respectfully… no 🙃",
+        "I can do this all day 😌",
+        "Be nice 😭",
+        "I’m blushing fr 😳",
+        "No button is in witness protection 🕵️‍♀️",
+        "How many times you gonna try 😭",
+        "Nope, angel 💘",
+        "This is getting personal 😂",
+        "No button is slippery 😭",
+        "You’re not catching it 😈",
+        "Try YES. It’s cute 💖",
+        "No button said ‘I’m booked’ 📅",
+        "Please choose YES 😭",
+        "Nope nope 😌",
+        "Okay you’re committed 😂",
+        "No is not the vibe 💗",
+        "No button: ‘I don’t know her’ 😭",
+        "I’m obsessed with you trying 😂",
+        "Last chance… pick YES 😇",
+        "I’m literally begging 😭",
+        "You’re unstoppable 😂",
+        "Okay fine… still no 😈",
+        "This is hilarious 😭",
+        "Just press YES already 💖",
+      ];
+
+      // Counts where we show the special "wow you've pressed no so many times..." message
+      const milestones = new Set([5, 15, 35, 50, 70, 80, 90, 95, 99, 100]);
+
+      let toastTimer = null;
+      let noCount = 0;
+      let lastNoTime = 0;
+
+      function show(page) {
+        [page1, page2, page3].forEach((p) => p.classList.remove("active"));
+        page.classList.add("active");
+      }
+
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 1400);
+      }
+
+      function popHeart(x, y) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = ["💖", "💘", "💕", "❤️", "💗"][rand(0, 4)];
+        h.style.left = x - 8 + "px";
+        h.style.top = y - 10 + "px";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 2200);
+      }
+
+      function moveNo() {
+        const pad = 16;
+        const vw = window.innerWidth;
+        const vh = window.visualViewport
+          ? window.visualViewport.height
+          : window.innerHeight;
+        const r = noBtn.getBoundingClientRect();
+
+        const maxX = Math.max(pad, vw - r.width - pad);
+        const maxY = Math.max(pad, vh - r.height - pad);
+
+        // keep away from top browser UI + card area
+        const minY = Math.max(pad + 80, Math.floor(vh * 0.35));
+
+        const x = rand(pad, maxX);
+        const y = rand(minY, maxY);
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+      }
+
+      function handleNoAttempt(e) {
+        e.preventDefault();
+
+        // Debounce: ignore events within 300ms of each other
+        const now = Date.now();
+        if (now - lastNoTime < 300) return;
+        lastNoTime = now;
+        noCount += 1;
+
+        // heart at touch location if possible
+        const x = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+        const y = e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
+        if (typeof x === "number" && typeof y === "number") popHeart(x, y);
+
+        // Milestone messages
+        if (milestones.has(noCount) && noCount < 100) {
+          showToast(
+            `WOW 😭 you pressed “No” ${noCount} times… just press YES already 💖`
+          );
+        } else if (noCount === 100) {
+          showToast(
+            `OKAYYYY 😭 100 times?? Just press YES. I’m hiding “No” now 💘`
+          );
+          noBtn.classList.add("hidden");
+          hint.textContent = "No is gone 😌 now pick YES 💖";
+          return; // don't move it anymore
+        } else {
+          // Normal cute message (cycle through the 100 so it feels fresh)
+          const msg = noMessages[(noCount - 1) % noMessages.length];
+          showToast(`${msg}`);
+        }
+
+        moveNo();
+      }
+
+      nextBtn.onclick = () => {
+        show(page2);
+        noBtn.classList.remove("hidden");
+        moveNo();
+      };
+
+      yesBtn.onclick = () => {
+        show(page3);
+        noBtn.classList.add("hidden");
+        for (let i = 0; i < 18; i++) {
+          setTimeout(
+            () =>
+              popHeart(
+                rand(40, window.innerWidth - 40),
+                rand(80, window.innerHeight - 80)
+              ),
+            i * 40
+          );
+        }
+        showToast("YAYYYY 🥰");
+      };
+
+      // Move + message whenever she tries to click/tap "No"
+      ["pointerdown", "touchstart", "mouseenter", "click"].forEach((evt) => {
+        noBtn.addEventListener(evt, handleNoAttempt, { passive: false });
+      });
+
+      window.addEventListener("resize", () => {
+        if (!noBtn.classList.contains("hidden")) moveNo();
+      });
+    </script>
+  </body>
+</html>
